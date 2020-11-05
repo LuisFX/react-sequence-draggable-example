@@ -40,20 +40,21 @@ export const AddNodeButton = styled.button`
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  border: 2px solid #ff9000;
+  border: 2px solid #ea604c;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: 0.2;
   transition: 0.2s;
+  z-index: 6;
   &:hover {
     opacity: 1;
   }
 `;
 
 export const OpenIframeBox = styled.div`
-  background: #333;
+  background: #1d8bdf;
   color: #fff;
   width: 100%;
   display: flex;

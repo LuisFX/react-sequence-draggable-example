@@ -8,7 +8,7 @@ export default createGlobalStyle`
     outline: 0;
   }
   body {
-    background: #F4EECF;
+    background: #ffffff;
     color: #333;
     -webkit-font-smoothing: antialiased;
   }
@@ -21,5 +21,23 @@ export default createGlobalStyle`
   }
   button {
     cursor: pointer;
+  }
+
+  .slide-enter {
+  width: 1%;
+  }
+
+  .slide-enter.slide-enter-active {
+    width: 70%;
+    transition: 500ms ease-in;
+  }
+
+  .slide-leave {
+    width: 70%;
+  }
+
+  .slide-leave.slide-leave-active {
+    width: 1%;
+    transition: 300ms ease-in;
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useState, createRef, RefObject } from 'react';
+import React, { useState, createRef, RefObject, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import Xarrow from 'react-xarrows';
 import { Popover, ArrowContainer } from 'react-tiny-popover';
@@ -12,7 +12,6 @@ import {
   PageContent,
   PopOverContainer,
 } from './styles';
-import './animate.css';
 
 interface ArrowStateProps {
   arrowId: string;
@@ -67,23 +66,37 @@ const Main: React.FC = () => {
     },
   ]);
 
-  const handleCreateNode = (): void => {
-    const nodeName = prompt('Enter nome name');
+  const handleCreateNode = (nodeId: string): void => {
+    console.log(nodeId);
+    const nodeName = prompt('Enter node name:');
     if (nodeName) {
-      const newNodes = [...nodes];
+      const newNodes = nodes.map((node) => ({
+        ...node,
+        openPopOver: false,
+      }));
+      const newNodeId = `${nodeName}-${Date.now()}`;
       newNodes.push({
         title: nodeName,
-        uniqueId: `${nodeName}-${Date.now()}`,
+        uniqueId: newNodeId,
         ref: createRef() as RefObject<HTMLElement>,
         openPopOver: false,
         startPosition: {
-          x: 10,
-          y: 10,
+          x: 100,
+          y: 0,
         },
         connected: false,
       });
-      setNodes(newNodes);
-      forceRerender();
+
+      setNodes([...newNodes]);
+      const newArrows = [...arrows];
+      const newNodeStart = nodeId;
+      const newNodeEnd = newNodeId;
+      newArrows.push({
+        arrowId: `${newNodeStart}->${newNodeEnd}`,
+        start: nodeId,
+        end: newNodeEnd,
+      });
+      setArrows(newArrows);
     }
   };
 
@@ -134,15 +147,16 @@ const Main: React.FC = () => {
     <PageContainer>
       <Container style={{ cursor }} onClick={() => setIframeActive(false)}>
         <Menu>
-          <h1>Drag n Drop Sequence Example</h1>
+          <h1>Workflow Builder POC</h1>
         </Menu>
         <PageContent id="bounded">
           {nodes.map((node) => (
             <Draggable
               key={node.uniqueId}
-              grid={[25, 25]}
+              grid={[20, 20]}
               nodeRef={node.ref}
               onDrag={forceRerender}
+              axis="x"
               defaultPosition={node.startPosition}
             >
               <div ref={node.ref as React.RefObject<HTMLDivElement>}>
@@ -154,39 +168,38 @@ const Main: React.FC = () => {
                   onClickBox={() => handleOnClickBox(node.iframeURL)}
                   onClickAddNode={() => handleSelectNewNode(node.uniqueId)}
                   popOverElement={
-                    // eslint-disable-next-line react/jsx-wrap-multilines
-                    <Popover
-                      isOpen={node.openPopOver}
-                      onClickOutside={() => handleCloseNode(node.uniqueId)}
-                      padding={20}
-                      containerStyle={{
-                        top: '-40px',
-                      }}
-                      positions={['bottom']}
-                      content={({ position, popoverRect, childRect }) => (
-                        <ArrowContainer
-                          position={position}
-                          popoverRect={popoverRect}
-                          childRect={childRect}
-                          arrowColor="#f9f9f9"
-                          arrowSize={10}
-                        >
-                          <PopOverContainer>
-                            <h4>Options: </h4>
-                            <ul>
-                              <li>Do this</li>
-                              <li>Do that</li>
-                              <li>Do something else</li>
-                            </ul>
-                            <button type="button" onClick={handleCreateNode}>
-                              Create Node
-                            </button>
-                          </PopOverContainer>
-                        </ArrowContainer>
-                      )}
-                    >
-                      <div />
-                    </Popover>
+                    !node.connected ? (
+                      <Popover
+                        isOpen={node.openPopOver}
+                        onClickOutside={() => handleCloseNode(node.uniqueId)}
+                        padding={20}
+                        containerStyle={{
+                          top: '-40px',
+                        }}
+                        positions={['bottom']}
+                        content={({ position, popoverRect, childRect }) => (
+                          <ArrowContainer
+                            position={position}
+                            popoverRect={popoverRect}
+                            childRect={childRect}
+                            arrowColor="#e1e1e1"
+                            arrowSize={10}
+                          >
+                            <PopOverContainer>
+                              <h3>Options</h3>
+                              <button
+                                type="button"
+                                onClick={() => handleCreateNode(node.uniqueId)}
+                              >
+                                Create Node
+                              </button>
+                            </PopOverContainer>
+                          </ArrowContainer>
+                        )}
+                      >
+                        <div />
+                      </Popover>
+                    ) : undefined
                   }
                 />
               </div>
@@ -200,6 +213,7 @@ const Main: React.FC = () => {
               color="#999"
               strokeWidth={3}
               headSize={5}
+              monitorDOMchanges
             />
           ))}
         </PageContent>

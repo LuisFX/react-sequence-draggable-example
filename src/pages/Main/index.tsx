@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  createRef,
-  useEffect,
-  RefObject,
-} from 'react';
+import React, { useState, createRef, RefObject } from 'react';
 import Draggable from 'react-draggable';
 import Xarrow from 'react-xarrows';
 import DraggableBox from '../../components/DraggableBox';
@@ -114,7 +108,7 @@ const Main: React.FC = () => {
         </button>
       </Menu>
       <PageContent id="bounded">
-        {nodes.map((node, index) => (
+        {nodes.map((node) => (
           <Draggable
             key={node.uniqueId}
             grid={[25, 25]}

@@ -27,6 +27,7 @@
     "no-unused-expressions": "off",
     "no-use-before-define": "off",
     "no-plusplus": "off",
+    "no-param-reassign": "off",
     "no-alert": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",

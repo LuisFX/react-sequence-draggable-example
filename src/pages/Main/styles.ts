@@ -1,11 +1,36 @@
 import styled from 'styled-components';
 
+export const PageContainer = styled.main`
+  display: flex;
+`;
+
 export const Container = styled.div`
   padding: 16px;
+  flex: 1;
 `;
 
 export const Menu = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const PageContent = styled.div`
+  margin-top: 25px;
+  width: 100%;
+  height: 100vh;
+  border: 2px dotted #ff9000;
+  position: relative;
+  overflow: hidden;
+`;
+
+export const PopOverContainer = styled.div`
+  width: 300px;
+  height: 200px;
+  background: #f9f9f9;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
 
@@ -24,13 +49,4 @@ export const Menu = styled.div`
       background-color: #ff7000;
     }
   }
-`;
-
-export const PageContent = styled.div`
-  margin-top: 25px;
-  width: 100%;
-  height: 100vh;
-  border: 2px dotted #ff9000;
-  position: relative;
-  overflow: hidden;
 `;

@@ -2,19 +2,22 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: 200px;
-  height: 80px;
   background: #fff;
-  border: 1px dotted #222;
-  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: grab;
   position: relative;
-  h3 {
-    pointer-events: none;
-  }
+  box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+`;
+
+export const BoxContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 20px;
 `;
 
 export const CloseButton = styled.button`
@@ -47,4 +50,15 @@ export const AddNodeButton = styled.button`
   &:hover {
     opacity: 1;
   }
+`;
+
+export const OpenIframeBox = styled.div`
+  background: #333;
+  color: #fff;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
 `;

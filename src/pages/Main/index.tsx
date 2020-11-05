@@ -1,4 +1,4 @@
-import React, { useState, createRef, RefObject, useEffect } from 'react';
+import React, { useState, createRef, RefObject } from 'react';
 import Draggable from 'react-draggable';
 import Xarrow from 'react-xarrows';
 import { Popover, ArrowContainer } from 'react-tiny-popover';
@@ -32,7 +32,6 @@ interface NodeProps {
 const Main: React.FC = () => {
   const [iframeActive, setIframeActive] = useState(false);
   const [iframeURL, setIframeURL] = useState('');
-  const [cursor, setCursor] = useState('auto');
   const [, setRender] = useState({});
   const forceRerender = (): void => setRender({});
   const [nodes, setNodes] = useState<NodeProps[]>([
@@ -67,7 +66,6 @@ const Main: React.FC = () => {
   ]);
 
   const handleCreateNode = (nodeId: string): void => {
-    console.log(nodeId);
     const nodeName = prompt('Enter node name:');
     if (nodeName) {
       const newNodes = nodes.map((node) => ({
@@ -145,7 +143,7 @@ const Main: React.FC = () => {
 
   return (
     <PageContainer>
-      <Container style={{ cursor }} onClick={() => setIframeActive(false)}>
+      <Container onClick={() => setIframeActive(false)}>
         <Menu>
           <h1>Workflow Builder POC</h1>
         </Menu>

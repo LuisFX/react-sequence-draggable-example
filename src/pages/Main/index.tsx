@@ -39,7 +39,7 @@ const Main: React.FC = () => {
       title: 'Sales Page',
       uniqueId: 'sales-page-1',
       ref: createRef() as RefObject<HTMLElement>,
-      startPosition: { x: 100, y: 380 },
+      startPosition: { x: 100, y: 280 },
       connected: false,
       openPopOver: false,
       iframeURL:
@@ -49,7 +49,7 @@ const Main: React.FC = () => {
       title: 'Send Email',
       uniqueId: 'send-email-1',
       ref: createRef() as RefObject<HTMLElement>,
-      startPosition: { x: 100, y: 450 },
+      startPosition: { x: 100, y: 350 },
       connected: true,
       openPopOver: false,
       iframeURL:
@@ -80,7 +80,7 @@ const Main: React.FC = () => {
         openPopOver: false,
         startPosition: {
           x: 100,
-          y: 0,
+          y: -60,
         },
         connected: false,
       });

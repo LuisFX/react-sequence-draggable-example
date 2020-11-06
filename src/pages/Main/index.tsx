@@ -1,9 +1,9 @@
-import React, { useState, createRef, RefObject } from 'react';
+import React, { useState, createRef, RefObject, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import Xarrow from 'react-xarrows';
-import { Popover, ArrowContainer } from 'react-tiny-popover';
 import DraggableBox from '../../components/DraggableBox';
 import IframeViewer from '../IframeViewer';
+import clickFunnelsImg from '../../assets/images/clickfunnels-logo.webp';
 
 import {
   PageContainer,
@@ -24,9 +24,8 @@ interface NodeProps {
   uniqueId: string;
   ref: RefObject<HTMLElement>;
   connected?: boolean;
-  startPosition?: { x: number; y: number };
+  startPosition: { x: number; y: number };
   iframeURL?: string;
-  openPopOver: boolean;
 }
 
 const Main: React.FC = () => {
@@ -34,26 +33,25 @@ const Main: React.FC = () => {
   const [iframeURL, setIframeURL] = useState('');
   const [, setRender] = useState({});
   const forceRerender = (): void => setRender({});
+  const [offsetYPosition, setOffsetYPosition] = useState(175);
   const [nodes, setNodes] = useState<NodeProps[]>([
-    {
-      title: 'Sales Page',
-      uniqueId: 'sales-page-1',
-      ref: createRef() as RefObject<HTMLElement>,
-      startPosition: { x: 100, y: 280 },
-      connected: false,
-      openPopOver: false,
-      iframeURL:
-        'https://docs.google.com/forms/d/e/1FAIpQLSeYYJ9i5JBP3f-sbN7JSaWMYwq50Pll_MvCxRWpFL66sErUoA/viewform?embedded=true',
-    },
     {
       title: 'Send Email',
       uniqueId: 'send-email-1',
       ref: createRef() as RefObject<HTMLElement>,
-      startPosition: { x: 100, y: 350 },
+      startPosition: { x: 100, y: 25 },
       connected: true,
-      openPopOver: false,
       iframeURL:
         'https://docs.google.com/forms/d/e/1FAIpQLSchOd4cD2pZATXiapgU57ex3soda3JizOlKLkwrZJ4xGgRoGw/viewform?embedded=true',
+    },
+    {
+      title: 'Sales Page',
+      uniqueId: 'sales-page-1',
+      ref: createRef() as RefObject<HTMLElement>,
+      startPosition: { x: 100, y: 100 },
+      connected: false,
+      iframeURL:
+        'https://docs.google.com/forms/d/e/1FAIpQLSeYYJ9i5JBP3f-sbN7JSaWMYwq50Pll_MvCxRWpFL66sErUoA/viewform?embedded=true',
     },
   ]);
 
@@ -65,27 +63,39 @@ const Main: React.FC = () => {
     },
   ]);
 
+  const [reflectedArrows, setReflectedArrows] = useState<ArrowStateProps[]>([
+    {
+      arrowId: 'send-email-1->sales-page-1',
+      start: 'send-email-1',
+      end: 'sales-page-1',
+    },
+  ]);
+
   const handleCreateNode = (nodeId: string): void => {
     const nodeName = prompt('Enter node name:');
     if (nodeName) {
-      const newNodes = nodes.map((node) => ({
-        ...node,
-        openPopOver: false,
-      }));
+      const newNodes = [...nodes];
+      const nodeIndexToConnect = newNodes.findIndex(
+        (node) => node.uniqueId === nodeId,
+      );
+      if (nodeIndexToConnect !== -1) {
+        newNodes[nodeIndexToConnect].connected = true;
+      }
       const newNodeId = `${nodeName}-${Date.now()}`;
       newNodes.push({
         title: nodeName,
         uniqueId: newNodeId,
         ref: createRef() as RefObject<HTMLElement>,
-        openPopOver: false,
         startPosition: {
           x: 100,
-          y: -60,
+          y: offsetYPosition,
         },
         connected: false,
       });
-
       setNodes([...newNodes]);
+      console.log('current', offsetYPosition);
+      console.log('next', newNodes.length * 75 + 25);
+      setOffsetYPosition(newNodes.length * 75 + 25);
       const newArrows = [...arrows];
       const newNodeStart = nodeId;
       const newNodeEnd = newNodeId;
@@ -98,40 +108,30 @@ const Main: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    setReflectedArrows([]);
+    setTimeout(() => {
+      setReflectedArrows([...arrows]);
+    }, 0);
+  }, [arrows]);
+
   const handleRemoveNode = (nodeId: string): void => {
     const deletedNode = nodes.find((node) => node.uniqueId === nodeId);
-    setNodes(nodes.filter((node) => node.uniqueId !== nodeId));
+    const newDeletedNodes = nodes.filter((node) => node.uniqueId !== nodeId);
     if (deletedNode) {
-      const attachedArrow = arrows.find((arrow) =>
-        arrow.arrowId.includes(deletedNode.uniqueId),
+      const attachedArrows = arrows.filter(
+        (arrow) => !arrow.arrowId.includes(deletedNode.uniqueId),
       );
-      setArrows(
-        arrows.filter((arrow) => arrow.arrowId !== attachedArrow?.arrowId),
-      );
+      setArrows(attachedArrows);
+      const newNodesToDisconnect = newDeletedNodes.map((node) => ({
+        ...node,
+        connected: !!attachedArrows.find((arrow) =>
+          arrow.start.includes(node.uniqueId),
+        ),
+      }));
+      setNodes(newNodesToDisconnect);
     }
     forceRerender();
-  };
-
-  const handleSelectNewNode = (id: string): void => {
-    // setCursor('crosshair');
-    // setActiveSelection(id);
-    const nodeToOpen = nodes.findIndex((node) => node.uniqueId === id);
-    if (nodeToOpen !== -1) {
-      const newNodes = [...nodes];
-      newNodes[nodeToOpen].openPopOver = true;
-      setNodes(newNodes);
-    }
-  };
-
-  const handleCloseNode = (id: string): void => {
-    // setCursor('crosshair');
-    // setActiveSelection(id);
-    const nodeToOpen = nodes.findIndex((node) => node.uniqueId === id);
-    if (nodeToOpen !== -1) {
-      const newNodes = [...nodes];
-      newNodes[nodeToOpen].openPopOver = false;
-      setNodes(newNodes);
-    }
   };
 
   const handleOnClickBox = (urlIframe?: string): void => {
@@ -145,7 +145,8 @@ const Main: React.FC = () => {
     <PageContainer>
       <Container onClick={() => setIframeActive(false)}>
         <Menu>
-          <h1>Workflow Builder POC</h1>
+          <img width="80" src={clickFunnelsImg} alt="Click Funnels" />
+          <h1>Workflow Builder</h1>
         </Menu>
         <PageContent id="bounded">
           {nodes.map((node) => (
@@ -155,7 +156,8 @@ const Main: React.FC = () => {
               nodeRef={node.ref}
               onDrag={forceRerender}
               axis="x"
-              defaultPosition={node.startPosition}
+              handle=".handle"
+              positionOffset={node.startPosition}
             >
               <div ref={node.ref as React.RefObject<HTMLDivElement>}>
                 <DraggableBox
@@ -164,54 +166,35 @@ const Main: React.FC = () => {
                   isConnected={node.connected}
                   onClickClose={() => handleRemoveNode(node.uniqueId)}
                   onClickBox={() => handleOnClickBox(node.iframeURL)}
-                  onClickAddNode={() => handleSelectNewNode(node.uniqueId)}
                   popOverElement={
                     !node.connected ? (
-                      <Popover
-                        isOpen={node.openPopOver}
-                        onClickOutside={() => handleCloseNode(node.uniqueId)}
-                        padding={20}
-                        containerStyle={{
-                          top: '-40px',
-                        }}
-                        positions={['bottom']}
-                        content={({ position, popoverRect, childRect }) => (
-                          <ArrowContainer
-                            position={position}
-                            popoverRect={popoverRect}
-                            childRect={childRect}
-                            arrowColor="#e1e1e1"
-                            arrowSize={10}
-                          >
-                            <PopOverContainer>
-                              <h3>Options</h3>
-                              <button
-                                type="button"
-                                onClick={() => handleCreateNode(node.uniqueId)}
-                              >
-                                Create Node
-                              </button>
-                            </PopOverContainer>
-                          </ArrowContainer>
-                        )}
-                      >
-                        <div />
-                      </Popover>
+                      <PopOverContainer>
+                        <h3>Options</h3>
+                        <button
+                          type="button"
+                          onClick={
+                            () => handleCreateNode(node.uniqueId)
+                            // eslint-disable-next-line react/jsx-curly-newline
+                          }
+                        >
+                          Create Node
+                        </button>
+                      </PopOverContainer>
                     ) : undefined
                   }
                 />
               </div>
             </Draggable>
           ))}
-          {arrows.map((arrow) => (
+          {reflectedArrows.map((arrow) => (
             <Xarrow
               key={arrow.arrowId}
               start={arrow.start}
               end={arrow.end}
-              color="#999"
+              path="grid"
+              color="#ea604c"
               strokeWidth={3}
               headSize={5}
-              monitorDOMchanges
             />
           ))}
         </PageContent>

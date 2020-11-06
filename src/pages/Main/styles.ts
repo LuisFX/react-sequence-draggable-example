@@ -12,13 +12,13 @@ export const Container = styled.div`
   flex: 1;
 `;
 
-export const Menu = styled.div`
+export const Menu = styled.header`
   display: flex;
   align-items: center;
-  justify-content: space-between;
 
   h1 {
-    color: #2b3b48;
+    color: #fff;
+    margin-left: 20px;
   }
 `;
 
@@ -27,8 +27,11 @@ export const PageContent = styled.div`
   width: 100%;
   border: 2px dashed #2b3b48;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 90%;
+  position: relative;
+  background: rgba(43, 59, 72, 0.3);
 `;
 
 export const PopOverContainer = styled.div`

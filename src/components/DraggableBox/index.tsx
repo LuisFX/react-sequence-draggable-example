@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
+import Popover from '../Popover';
 
 import {
   Container,
@@ -16,6 +17,7 @@ export interface DraggableBoxProps {
   id?: string;
   isConnected?: boolean;
   popOverElement?: JSX.Element;
+  timeout?: number;
 }
 
 const DraggableBox: React.FC<DraggableBoxProps> = ({
@@ -26,7 +28,10 @@ const DraggableBox: React.FC<DraggableBoxProps> = ({
   onClickBox,
   isConnected,
   popOverElement,
+  timeout = 3000,
 }) => {
+  const [openPopover, setOpenPopover] = useState(false);
+  const addNodeButtonRef = useRef<HTMLButtonElement>(null);
   const handleClickBox = useCallback(
     (e) => {
       e.stopPropagation();
@@ -37,20 +42,31 @@ const DraggableBox: React.FC<DraggableBoxProps> = ({
 
   return (
     <Container id={id}>
-      <BoxContent>
+      <BoxContent className="handle">
         <CloseButton onClick={onClickClose}>X</CloseButton>
         {!isConnected && (
           <>
             <AddNodeButton
               id={id}
+              ref={addNodeButtonRef}
               onClick={(e) => {
                 e.stopPropagation();
                 onClickAddNode && onClickAddNode();
+                setOpenPopover(!openPopover);
+                setTimeout(() => {
+                  setOpenPopover(false);
+                }, timeout);
               }}
             >
               +
             </AddNodeButton>
-            {popOverElement}
+            {openPopover && (
+              <Popover
+                content={popOverElement}
+                nodeRef={addNodeButtonRef}
+                onClickOutside={() => setOpenPopover(!openPopover)}
+              />
+            )}
           </>
         )}
         <h3 id={id}>{title}</h3>

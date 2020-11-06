@@ -10,6 +10,7 @@ export const Container = styled.div`
   cursor: grab;
   position: relative;
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  border-radius: 4px;
 `;
 
 export const BoxContent = styled.div`
@@ -33,7 +34,7 @@ export const AddNodeButton = styled.button`
   all: unset;
   cursor: pointer;
   position: absolute;
-  top: -35px;
+  bottom: -35px;
   left: 50%;
   transform: translateX(-50%);
   font-weight: 600;
@@ -48,6 +49,7 @@ export const AddNodeButton = styled.button`
   opacity: 0.2;
   transition: 0.2s;
   z-index: 6;
+  color: #ea604c;
   &:hover {
     opacity: 1;
   }
@@ -62,4 +64,14 @@ export const OpenIframeBox = styled.div`
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  cursor: pointer;
+`;
+
+export const PopOverWrapper = styled.div<{ posY?: number; posX?: number }>`
+  position: absolute;
+  display: inline-block;
+  top: ${(props) => props.posY || 0}px;
+  left: ${(props) => props.posX || 0}px;
 `;

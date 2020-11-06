@@ -93,8 +93,6 @@ const Main: React.FC = () => {
         connected: false,
       });
       setNodes([...newNodes]);
-      console.log('current', offsetYPosition);
-      console.log('next', newNodes.length * 75 + 25);
       setOffsetYPosition(newNodes.length * 75 + 25);
       const newArrows = [...arrows];
       const newNodeStart = nodeId;

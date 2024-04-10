@@ -36,37 +36,38 @@ const Main: React.FC = () => {
   const [offsetYPosition, setOffsetYPosition] = useState(175);
   const [nodes, setNodes] = useState<NodeProps[]>([
     {
-      title: 'Send Email',
-      uniqueId: 'send-email-1',
-      ref: createRef() as RefObject<HTMLElement>,
-      startPosition: { x: 100, y: 25 },
-      connected: true,
-      iframeURL:
-        'https://docs.google.com/forms/d/e/1FAIpQLSchOd4cD2pZATXiapgU57ex3soda3JizOlKLkwrZJ4xGgRoGw/viewform?embedded=true',
-    },
-    {
-      title: 'Sales Page',
-      uniqueId: 'sales-page-1',
+      title: 'Form',
+      uniqueId: 'form-1',
       ref: createRef() as RefObject<HTMLElement>,
       startPosition: { x: 100, y: 100 },
-      connected: false,
+      connected: true,
       iframeURL:
         'https://docs.google.com/forms/d/e/1FAIpQLSeYYJ9i5JBP3f-sbN7JSaWMYwq50Pll_MvCxRWpFL66sErUoA/viewform?embedded=true',
     },
+    {
+      title: 'Send Email',
+      uniqueId: 'send-email-1',
+      ref: createRef() as RefObject<HTMLElement>,
+      startPosition: { x: 140, y: 140 },
+      connected: false,
+      iframeURL:
+        'https://docs.google.com/forms/d/e/1FAIpQLSchOd4cD2pZATXiapgU57ex3soda3JizOlKLkwrZJ4xGgRoGw/viewform?embedded=true',
+    }
+    
   ]);
 
   const [arrows, setArrows] = useState<ArrowStateProps[]>([
     {
-      arrowId: 'send-email-1->sales-page-1',
-      start: 'send-email-1',
+      arrowId: 'form-1->send-email-1',
+      start: 'form-1',
       end: 'sales-page-1',
     },
   ]);
 
   const [reflectedArrows, setReflectedArrows] = useState<ArrowStateProps[]>([
     {
-      arrowId: 'send-email-1->sales-page-1',
-      start: 'send-email-1',
+      arrowId: 'form-1->send-email-1',
+      start: 'form-1',
       end: 'sales-page-1',
     },
   ]);
